@@ -14,16 +14,6 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
----
-# Conditionally disable springdoc on missing api-docs profile
-spring:
-  config:
-    activate:
-      on-profile: '!api-docs'
-springdoc:
-  api-docs:
-    enabled: false
----
 eureka:
   client:
     enabled: true
@@ -47,37 +37,19 @@ eureka:
       git-version: ${git.commit.id.describe:}
       git-commit: ${git.commit.id.abbrev:}
       git-branch: ${git.branch:}
-      context-path: ${server.servlet.context-path:}
+ribbon:
+  eureka:
+    enabled: true
 management:
   endpoints:
     web:
       base-path: /management
       exposure:
-        include:
-          [
-            'configprops',
-            'env',
-            'health',
-            'info',
-            'jhimetrics',
-            'jhiopenapigroups',
-            'logfile',
-            'loggers',
-            'prometheus',
-            'threaddump',
-            'liquibase',
-          ]
+        include: ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump']
   endpoint:
     health:
       show-details: when_authorized
       roles: 'ROLE_ADMIN'
-      probes:
-        enabled: true
-      group:
-        liveness:
-          include: livenessState
-        readiness:
-          include: readinessState,db
     jhimetrics:
       enabled: true
   info:
@@ -112,21 +84,8 @@ management:
             enabled: true
 
 spring:
-  autoconfigure:
-    exclude: org.springframework.boot.actuate.autoconfigure.metrics.jdbc.DataSourcePoolMetricsAutoConfiguration
   application:
     name: eyetic
-  profiles:
-    # The commented value for `active` can be replaced with valid Spring profiles to load.
-    # Otherwise, it will be filled in by maven when building the JAR file
-    # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
-    active: #spring.profiles.active#
-    group:
-      dev:
-        - dev
-        - api-docs
-        # Uncomment to activate TLS for the dev profile
-        #- tls
   jmx:
     enabled: false
   data:
@@ -139,7 +98,7 @@ spring:
       hibernate.jdbc.time_zone: UTC
       hibernate.id.new_generator_mappings: true
       hibernate.connection.provider_disables_autocommit: true
-      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_second_level_cache: true
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: false
       # modify batch size as necessary
@@ -180,9 +139,6 @@ server:
       cookie:
         http-only: true
 
-springdoc:
-  show-actuator: true
-
 # Properties to be exposed on the /info management endpoint
 info:
   # Comma separated list of profiles that will trigger the ribbon to show
@@ -199,19 +155,18 @@ jhipster:
     name: 'eyeticApp'
   # By default CORS is disabled. Uncomment to enable.
   # cors:
-  #   allowed-origins: "http://localhost:8100,http://localhost:9000"
-  #   allowed-methods: "*"
-  #   allowed-headers: "*"
-  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
-  #   allow-credentials: true
-  #   max-age: 1800
+  #     allowed-origins: "*"
+  #     allowed-methods: "*"
+  #     allowed-headers: "*"
+  #     exposed-headers: "Authorization,Link,X-Total-Count"
+  #     allow-credentials: true
+  #     max-age: 1800
   mail:
     from: eyetic@localhost
-  api-docs:
-    default-include-pattern: ${server.servlet.context-path:}/api/**
-    management-include-pattern: ${server.servlet.context-path:}/management/**
-    title: Eyetic API
-    description: Eyetic API documentation
+  swagger:
+    default-include-pattern: /api/.*
+    title: eyetic API
+    description: eyetic API documentation
     version: 0.0.1
     terms-of-service-url:
     contact-name:
@@ -219,18 +174,6 @@ jhipster:
     contact-email:
     license: unlicensed
     license-url:
-  security:
-    content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
-kafka:
-  bootstrap-servers: localhost:9092
-  consumer:
-    key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    group.id: eyetic
-    auto.offset.reset: earliest
-  producer:
-    key.serializer: org.apache.kafka.common.serialization.StringSerializer
-    value.serializer: org.apache.kafka.common.serialization.StringSerializer
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

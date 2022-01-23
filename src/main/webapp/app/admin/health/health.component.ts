@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { HealthService } from './health.service';
-import { Health, HealthDetails, HealthStatus } from './health.model';
-import { HealthModalComponent } from './modal/health-modal.component';
+import { HealthService, HealthStatus, Health, HealthKey, HealthDetails } from './health.service';
+import { HealthModalComponent } from './health-modal.component';
 
 @Component({
   selector: 'jhi-health',
@@ -22,22 +21,23 @@ export class HealthComponent implements OnInit {
   getBadgeClass(statusState: HealthStatus): string {
     if (statusState === 'UP') {
       return 'badge-success';
+    } else {
+      return 'badge-danger';
     }
-    return 'badge-danger';
   }
 
   refresh(): void {
-    this.healthService.checkHealth().subscribe({
-      next: health => (this.health = health),
-      error: (error: HttpErrorResponse) => {
+    this.healthService.checkHealth().subscribe(
+      health => (this.health = health),
+      (error: HttpErrorResponse) => {
         if (error.status === 503) {
           this.health = error.error;
         }
-      },
-    });
+      }
+    );
   }
 
-  showHealth(health: { key: string; value: HealthDetails }): void {
+  showHealth(health: { key: HealthKey; value: HealthDetails }): void {
     const modalRef = this.modalService.open(HealthModalComponent);
     modalRef.componentInstance.health = health;
   }

@@ -1,47 +1,64 @@
 {
   "generator-jhipster": {
+    "promptValues": {
+      "packageName": "sn.interstellargroup.eyetic",
+      "nativeLanguage": "fr"
+    },
+    "jhipsterVersion": "6.10.5",
     "applicationType": "monolith",
-    "gitCompany": "",
     "baseName": "eyetic",
-    "packageName": "com.ababacardienendiaye.eyetic",
-    "packageFolder": "com/ababacardienendiaye/eyetic",
-    "serverPort": 8080,
-    "serviceDiscoveryType": "eureka",
+    "packageName": "sn.interstellargroup.eyetic",
+    "packageFolder": "sn/interstellargroup/eyetic",
+    "serverPort": "8080",
     "authenticationType": "jwt",
-    "cacheProvider": "no",
-    "enableHibernateCache": false,
-    "websocket": "spring-websocket",
+    "cacheProvider": "redis",
+    "enableHibernateCache": true,
+    "websocket": false,
     "databaseType": "sql",
     "devDatabaseType": "postgresql",
     "prodDatabaseType": "postgresql",
-    "searchEngine": "elasticsearch",
-    "enableSwaggerCodegen": "true",
-    "messageBroker": "kafka",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": "eureka",
     "buildTool": "maven",
+    "enableSwaggerCodegen": true,
+    "jwtSecretKey": "NDNlZjczMWQxMTM5YzA0ZWQ4Nzg3ZTAyNDljOGIyMzkxMmRkY2RlZmJmZjBmNGMwNDYxOTkyMDk2MDlmZjBkYmQ1MGQ1YTVhOGM5YTAzN2ZkNjRiYjA1ODc3OWEyNzdkODhjM2QyMWY4NjQ0OTQxNzMzNzRlNGYxMzdmZTg4NTM=",
+    "embeddableLaunchScript": false,
     "useSass": true,
     "clientPackageManager": "npm",
-    "testFrameworks": [],
+    "clientFramework": "angularX",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1642965110709,
+    "testFrameworks": ["protractor"],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [
+      {
+        "name": "generator-jhipster-primeng",
+        "version": "9.1.0"
+      },
+      {
+        "name": "generator-jhipster-file-handling",
+        "version": "1.1.1"
+      },
+      {
+        "name": "generator-jhipster-imageblobcache",
+        "version": "1.0.2"
+      },
+      {
+        "name": "generator-jhipster-safe-extensions",
+        "version": "0.0.2"
+      },
+      {
+        "name": "generator-codegen",
+        "version": "0.3.1"
+      }
+    ],
     "enableTranslation": true,
     "nativeLanguage": "fr",
     "languages": ["fr", "en"],
-    "clientFramework": "angularX",
-    "jhiPrefix": "jhi",
-    "withAdminUi": true,
-    "jhipsterVersion": "7.5.0",
-    "skipUserManagement": false,
-    "skipCheckLengthOfIdentifier": false,
-    "skipFakeData": false,
-    "entitySuffix": "",
-    "dtoSuffix": "DTO",
-    "blueprints": [],
-    "otherModules": [],
-    "pages": [],
-    "creationTimestamp": 1641419315092,
-    "jwtSecretKey": "ZWNiYjFiMzEzMjliMDZmN2VkZTA0ODE0ZjllZjc3Y2U3ZTYyZGU5NDA4OTAwMjMyNmRiNjI5MGI0YTlhM2M3NmY5ZjA0OTViNmEyMDUzNDE4NzM1ZjJiYTViZTEwNzAwNDUwNDk4NzY1Y2U1Y2UwOGNhMjc2ODNlOTliYWNlYWY=",
-    "devServerPort": 4200,
-    "clientTheme": "none",
-    "clientThemeVariant": "",
-    "reactive": false,
-    "enableGradleEnterprise": false
+    "blueprints": []
   }
 }

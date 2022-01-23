@@ -1,51 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
+import { JhiLanguageService } from 'ng-jhipster';
 import { SessionStorageService } from 'ngx-webstorage';
 import { Observable, ReplaySubject, of } from 'rxjs';
 import { shareReplay, tap, catchError } from 'rxjs/operators';
-
 import { StateStorageService } from 'app/core/auth/state-storage.service';
-import { ApplicationConfigService } from '../config/application-config.service';
-import { Account } from 'app/core/auth/account.model';
-import { TrackerService } from '../tracker/tracker.service';
+
+import { SERVER_API_URL } from 'app/app.constants';
+import { Account } from 'app/core/user/account.model';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
   private userIdentity: Account | null = null;
   private authenticationState = new ReplaySubject<Account | null>(1);
-  private accountCache$?: Observable<Account> | null;
+  private accountCache$?: Observable<Account | null>;
 
   constructor(
-    private translateService: TranslateService,
-    private sessionStorageService: SessionStorageService,
+    private languageService: JhiLanguageService,
+    private sessionStorage: SessionStorageService,
     private http: HttpClient,
-    private trackerService: TrackerService,
     private stateStorageService: StateStorageService,
-    private router: Router,
-    private applicationConfigService: ApplicationConfigService
+    private router: Router
   ) {}
 
   save(account: Account): Observable<{}> {
-    return this.http.post(this.applicationConfigService.getEndpointFor('api/account'), account);
+    return this.http.post(SERVER_API_URL + 'api/account', account);
   }
 
   authenticate(identity: Account | null): void {
     this.userIdentity = identity;
     this.authenticationState.next(this.userIdentity);
-    if (!identity) {
-      this.accountCache$ = null;
-    }
-    if (identity) {
-      this.trackerService.connect();
-    } else {
-      this.trackerService.disconnect();
-    }
   }
 
   hasAnyAuthority(authorities: string[] | string): boolean {
-    if (!this.userIdentity) {
+    if (!this.userIdentity || !this.userIdentity.authorities) {
       return false;
     }
     if (!Array.isArray(authorities)) {
@@ -55,24 +44,29 @@ export class AccountService {
   }
 
   identity(force?: boolean): Observable<Account | null> {
-    if (!this.accountCache$ || force) {
+    if (!this.accountCache$ || force || !this.isAuthenticated()) {
       this.accountCache$ = this.fetch().pipe(
-        tap((account: Account) => {
+        catchError(() => {
+          return of(null);
+        }),
+        tap((account: Account | null) => {
           this.authenticate(account);
 
           // After retrieve the account info, the language will be changed to
           // the user's preferred language configured in the account setting
-          // unless user have choosed other language in the current session
-          if (!this.sessionStorageService.retrieve('locale')) {
-            this.translateService.use(account.langKey);
+          if (account && account.langKey) {
+            const langKey = this.sessionStorage.retrieve('locale') || account.langKey;
+            this.languageService.changeLanguage(langKey);
           }
 
-          this.navigateToStoredUrl();
+          if (account) {
+            this.navigateToStoredUrl();
+          }
         }),
         shareReplay()
       );
     }
-    return this.accountCache$.pipe(catchError(() => of(null)));
+    return this.accountCache$;
   }
 
   isAuthenticated(): boolean {
@@ -83,8 +77,12 @@ export class AccountService {
     return this.authenticationState.asObservable();
   }
 
+  getImageUrl(): string {
+    return this.userIdentity ? this.userIdentity.imageUrl : '';
+  }
+
   private fetch(): Observable<Account> {
-    return this.http.get<Account>(this.applicationConfigService.getEndpointFor('api/account'));
+    return this.http.get<Account>(SERVER_API_URL + 'api/account');
   }
 
   private navigateToStoredUrl(): void {

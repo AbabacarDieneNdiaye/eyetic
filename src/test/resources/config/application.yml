@@ -26,9 +26,6 @@ spring:
     #active: testcontainers
   application:
     name: eyetic
-  cloud:
-    config:
-      enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:h2:mem:eyetic;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -41,8 +38,9 @@ spring:
     serialization:
       write-durations-as-timestamps: false
   jpa:
-    database-platform: tech.jhipster.domain.util.FixedH2Dialect
+    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
     open-in-view: false
+    show-sql: false
     hibernate:
       ddl-auto: none
       naming:
@@ -56,7 +54,6 @@ spring:
       hibernate.generate_statistics: false
       hibernate.hbm2ddl.auto: validate
       hibernate.jdbc.time_zone: UTC
-      hibernate.query.fail_on_pagination_over_collection_fetch: true
   liquibase:
     contexts: test
   mail:
@@ -107,19 +104,14 @@ jhipster:
     authentication:
       jwt:
         # This token must be encoded using Base64 (you can type `echo 'secret-key'|base64` on your command line)
-        base64-secret: ZWNiYjFiMzEzMjliMDZmN2VkZTA0ODE0ZjllZjc3Y2U3ZTYyZGU5NDA4OTAwMjMyNmRiNjI5MGI0YTlhM2M3NmY5ZjA0OTViNmEyMDUzNDE4NzM1ZjJiYTViZTEwNzAwNDUwNDk4NzY1Y2U1Y2UwOGNhMjc2ODNlOTliYWNlYWY=
+        base64-secret: NDNlZjczMWQxMTM5YzA0ZWQ4Nzg3ZTAyNDljOGIyMzkxMmRkY2RlZmJmZjBmNGMwNDYxOTkyMDk2MDlmZjBkYmQ1MGQ1YTVhOGM5YTAzN2ZkNjRiYjA1ODc3OWEyNzdkODhjM2QyMWY4NjQ0OTQxNzMzNzRlNGYxMzdmZTg4NTM=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
-kafka:
-  bootstrap-servers: localhost:9092
-  consumer:
-    key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    group.id: eyetic
-    auto.offset.reset: earliest
-  producer:
-    key.serializer: org.apache.kafka.common.serialization.StringSerializer
-    value.serializer: org.apache.kafka.common.serialization.StringSerializer
+  metrics:
+    logs: # Reports metrics in the logs
+      enabled: true
+      report-frequency: 60 # in seconds
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
