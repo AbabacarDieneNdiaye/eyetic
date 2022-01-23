@@ -16,8 +16,8 @@
 logging:
   level:
     ROOT: INFO
-    tech.jhipster: INFO
-    com.ababacardienendiaye.eyetic: INFO
+    io.github.jhipster: INFO
+    sn.interstellargroup.eyetic: INFO
 
 eureka:
   instance:
@@ -38,18 +38,6 @@ spring:
       enabled: false
     livereload:
       enabled: false
-  cloud:
-    config:
-      retry:
-        initial-interval: 1000
-        max-interval: 2000
-        max-attempts: 100
-      uri: http://admin:${jhipster.registry.password}@localhost:8761/config
-      # name of the config server's property source (file.yml) that we want to use
-      name: eyetic
-      profile: prod
-      label: main # toggle to switch to a different version of the configuration as stored in git
-      # it can be set to any label, branch or commit of the configuration source Git repository
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5432/eyetic
@@ -59,10 +47,8 @@ spring:
       poolName: Hikari
       auto-commit: false
   jpa:
-    database-platform: tech.jhipster.domain.util.FixedPostgreSQL10Dialect
-  elasticsearch:
-    rest:
-      uris: http://localhost:9200
+    database-platform: io.github.jhipster.domain.util.FixedPostgreSQL10Dialect
+    show-sql: false
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: prod
@@ -104,10 +90,9 @@ spring:
 # ===================================================================
 server:
   port: 8080
-  shutdown: graceful # see https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-graceful-shutdown
   compression:
     enabled: true
-    mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json,image/svg+xml
+    mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
     min-response-size: 1024
 
 # ===================================================================
@@ -120,8 +105,13 @@ jhipster:
   http:
     cache: # Used by the CachingHttpHeadersFilter
       timeToLiveInDays: 1461
-  registry:
-    password: admin
+  cache: # Cache configuration
+    redis: # Redis configuration
+      expiration: 3600 # By default objects stay 1 hour (in seconds) in the cache
+      server: redis://localhost:6379
+      cluster: false
+      # server: redis://localhost:6379,redis://localhost:16379,redis://localhost:26379
+      # cluster: true
   security:
     authentication:
       jwt:
@@ -130,12 +120,16 @@ jhipster:
         # - In the JHipster Registry (which includes a Spring Cloud Config server)
         # - In a separate `application-prod.yml` file, in the same folder as your executable JAR file
         # - In the `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` environment variable
-        base64-secret: ZWNiYjFiMzEzMjliMDZmN2VkZTA0ODE0ZjllZjc3Y2U3ZTYyZGU5NDA4OTAwMjMyNmRiNjI5MGI0YTlhM2M3NmY5ZjA0OTViNmEyMDUzNDE4NzM1ZjJiYTViZTEwNzAwNDUwNDk4NzY1Y2U1Y2UwOGNhMjc2ODNlOTliYWNlYWY=
+        base64-secret: NDNlZjczMWQxMTM5YzA0ZWQ4Nzg3ZTAyNDljOGIyMzkxMmRkY2RlZmJmZjBmNGMwNDYxOTkyMDk2MDlmZjBkYmQ1MGQ1YTVhOGM5YTAzN2ZkNjRiYjA1ODc3OWEyNzdkODhjM2QyMWY4NjQ0OTQxNzMzNzRlNGYxMzdmZTg4NTM=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail: # specific JHipster mail property, for standard properties see MailProperties
     base-url: http://my-server-url-to-change # Modify according to your server's URL
+  metrics:
+    logs: # Reports metrics in the logs
+      enabled: false
+      report-frequency: 60 # in seconds
   logging:
     use-json-format: false # By default, logs are not in Json format
     logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
@@ -143,6 +137,9 @@ jhipster:
       host: localhost
       port: 5000
       queue-size: 512
+  audit-events:
+    retention-period: 30 # Number of days before audit events are deleted.
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
